@@ -67,11 +67,16 @@ public class HostingService {
         ImageHosting imageHosting = imageHostingRepository.findById(imgNum).orElseThrow(
                 () -> new IllegalArgumentException("id가 없습니다."));
 
+        //id가 없을경우 리턴
+        if(imageHosting==null) return "No_image_id";
+
         //파일 이름 가져오기
         String filePath = imageHosting.getImgPath();
         int pos = filePath.lastIndexOf("/");
         String fileName = filePath.substring(pos+1);
         String newFilePath = environment.getProperty("imgPath")+"/module/"+fileName;
+
+        if(filePath.equals(newFilePath)) return "Redundant_work";
 
         //파일경로 접두어
         String pathPrefix = environment.getProperty("prefix");
