@@ -38,7 +38,7 @@ public class HostingService {
 
         //파일 저장경로 지정, 윈도우 테스트시 "C:/" 로 변경, /home/mit09/user/filename.ext
         String savePath = environment.getProperty("imgPath")+"/user/"+baseName+"."+extension;
-        File file = new File("C:/"+savePath);
+        File file = new File("file:/"+savePath);
 
         //파일 저장
         try {
@@ -74,8 +74,8 @@ public class HostingService {
 
         //파일 경로 이동하기
         try {
-            File file = new File("C:/"+filePath);
-            file.renameTo(new File("C:/"+newFilePath));
+            File file = new File("file:/"+filePath);
+            file.renameTo(new File("file:/"+newFilePath));
         }catch (Exception e){
             e.printStackTrace();
             return "file_conversion_error";
