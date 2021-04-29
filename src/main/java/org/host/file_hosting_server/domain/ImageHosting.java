@@ -16,14 +16,21 @@ public class ImageHosting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long imgNum;
 
+    //유저넘버(외래키 X)
+    @Column(nullable = false, unique = true)
+    private Long userInfoId;
+
+    //이미지 이름(제목)
     @Column(nullable = false)
     private String imgName;
 
-    @Column(nullable = false)
+    //이미지 저장 경로
+    @Column(nullable = false, unique = true)
     private String imgPath;
 
     @Builder
-    public ImageHosting(String imgName, String imgPath){
+    public ImageHosting(Long userInfoId, String imgName, String imgPath){
+        this.userInfoId = userInfoId;
         this.imgName = imgName;
         this.imgPath = imgPath;
     }

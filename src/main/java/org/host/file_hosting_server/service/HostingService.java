@@ -1,7 +1,6 @@
 package org.host.file_hosting_server.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.host.file_hosting_server.domain.ImageHosting;
 import org.host.file_hosting_server.domain.ImageHostingRepository;
 import org.springframework.core.env.Environment;
@@ -10,6 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.File;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
 @Service
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class HostingService {
     private final ImageHostingRepository imageHostingRepository;
 
     //사용자 이미지저장 요청시 수행
-    public String requestSave(String imgTitle, String requester, MultipartFile imgFile){
+    public String requestSave(String imgTitle, Long requester, MultipartFile imgFile){
         //제목이 없을경우 리턴
         if(imgTitle==null) return "No_title";
         if(requester==null) return "No_requester_name";
@@ -34,10 +35,15 @@ public class HostingService {
         //지원되는 확장자가 아닐경우 리턴
         if(!("jpg".equals(extension)||"png".equals(extension)||"jpeg".equals(extension))) return "No_support_extension";
 
-        //이곳에 파일이름 암호화코드 삽입
+        //파일이름 암호화코드
+        baseName = getSHA256(imgTitle + requester + baseName);
 
-        //파일 저장경로 지정, 윈도우 테스트시 "C:/" 로 변경, /home/mit09/user/filename.ext
+        //파일 저장경로 지정, 윈도우 테스트시 "C:/" 로 변경, /home/mit09/user/{filename}.{extension}
         String savePath = environment.getProperty("imgPath")+"/user/"+baseName+"."+extension;
+
+        //데이터베이스 중복확인
+        if(imageHostingRepository.findByImgPath(savePath).isPresent()) return "No_redundant_storage";
+
         String pathPrefix = environment.getProperty("prefix");
         File file = new File(pathPrefix+savePath);
 
@@ -49,19 +55,18 @@ public class HostingService {
             return "file_conversion_error";
         }
 
-        //데이터베이스 저장
-        imageHostingRepository.save(ImageHosting.builder()
+        //데이터베이스 저장 및 이미지 번호 확인
+        Long imgNum = imageHostingRepository.save(ImageHosting.builder()
+                .userInfoId(requester)
                 .imgName(imgTitle)
                 .imgPath(savePath)
-                .build());
-
-        //이미지 키넘버 확인
-        Long imgNum = imageHostingRepository.findByImgName(imgTitle).get().getImgNum();
+                .build()).getImgNum();
 
         //이미지 키넘버 리턴
         return Long.toString(imgNum);
     }
 
+    //관리자 승인
     @Transactional
     public String requestAccept(String key, Long imgNum){
         //키가 맞지 않을경우 리턴
@@ -98,5 +103,19 @@ public class HostingService {
         imageHosting.setImgPath(newFilePath);
 
         return "OK";
+    }
+
+    //문자열 SHA-256 암호화
+    private String getSHA256(String input){
+        String toReturn = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            digest.reset();
+            digest.update(input.getBytes("utf8"));
+            toReturn = String.format("%064x", new BigInteger(1, digest.digest()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return toReturn;
     }
 }

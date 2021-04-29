@@ -15,7 +15,7 @@ public class HostingController {
     private final HostingService hostingService;
 
     @PostMapping("/requestSave")
-    public String requestSave(String imgTitle, String requester, MultipartFile imgFile){
+    public String requestSave(String imgTitle, Long requester, MultipartFile imgFile){
         return hostingService.requestSave(imgTitle, requester, imgFile);
     }
 
