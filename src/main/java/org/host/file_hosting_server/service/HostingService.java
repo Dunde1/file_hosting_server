@@ -11,6 +11,7 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +40,15 @@ public class HostingService {
         baseName = getSHA256(imgTitle + requester + baseName);
 
         //파일 저장경로 지정, 윈도우 테스트시 "C:/" 로 변경, /home/mit09/user/{filename}.{extension}
-        String savePath = environment.getProperty("imgPath")+"/user/"+baseName+"."+extension;
+        String savePath = "user/"+baseName+"."+extension;
+        String filePath = environment.getProperty("imgPath")+"/"+savePath;
+
 
         //데이터베이스 중복확인
         if(imageHostingRepository.findByImgPath(savePath).isPresent()) return "No_redundant_storage";
 
         String pathPrefix = environment.getProperty("prefix");
-        File file = new File(pathPrefix+savePath);
+        File file = new File(pathPrefix+filePath);
 
         //파일 저장
         try {
@@ -66,29 +69,29 @@ public class HostingService {
         return Long.toString(imgNum);
     }
 
-    //관리자 승인
+    //관리자 승인 메소드
     @Transactional
     public String requestAccept(String key, Long imgNum){
         //키가 맞지 않을경우 리턴
         if(!key.equals(environment.getProperty("acceptKey"))) return "Not_matched_key";
 
         //데이터베이스에서 이미지주소 가져오기
-        ImageHosting imageHosting = imageHostingRepository.findById(imgNum).orElseThrow(
-                () -> new IllegalArgumentException("id가 없습니다."));
+        Optional<ImageHosting> optionalImageHosting = imageHostingRepository.findById(imgNum);
 
         //id가 없을경우 리턴
-        if(imageHosting==null) return "No_image_id";
+        if(!optionalImageHosting.isPresent()) return "No_image_id";
 
         //파일 이름 가져오기
+        ImageHosting imageHosting = optionalImageHosting.get();
         String filePath = imageHosting.getImgPath();
         int pos = filePath.lastIndexOf("/");
         String fileName = filePath.substring(pos+1);
-        String newFilePath = environment.getProperty("imgPath")+"/module/"+fileName;
+        String newFilePath = "module/"+fileName;
 
         if(filePath.equals(newFilePath)) return "Redundant_work";
 
         //파일경로 접두어
-        String pathPrefix = environment.getProperty("prefix");
+        String pathPrefix = environment.getProperty("prefix")+environment.getProperty("imgPath")+"/";
 
         //파일 경로 이동하기
         try {
