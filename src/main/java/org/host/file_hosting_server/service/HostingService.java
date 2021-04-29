@@ -55,7 +55,11 @@ public class HostingService {
                 .imgPath(savePath)
                 .build());
 
-        return "OK";
+        //이미지 키넘버 확인
+        Long imgNum = imageHostingRepository.findByImageName(imgTitle).get().getImgNum();
+
+        //이미지 키넘버 리턴
+        return Long.toString(imgNum);
     }
 
     @Transactional

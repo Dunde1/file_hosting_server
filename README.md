@@ -15,7 +15,7 @@
   + 파일 : MultipartFile imgFile
 + 리턴
   + ResponseBody 방식으로 String 타입 리턴
-  + "OK" : 전송이 성공적으로 완료됨.
+  + "숫자" : 전송이 성공적으로 완료됨. (숫자는 이미지의 PK 번호)
   + "No_title" : 제목없음.
   + "No_requester_name" : 작성자 없음.
   + "No_support_extension" : 확장자가 jpg, jpeg, png 가 아님.
