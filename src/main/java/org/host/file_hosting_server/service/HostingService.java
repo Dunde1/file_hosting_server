@@ -56,7 +56,7 @@ public class HostingService {
                 .build());
 
         //이미지 키넘버 확인
-        Long imgNum = imageHostingRepository.findByImageName(imgTitle).get().getImgNum();
+        Long imgNum = imageHostingRepository.findByImgName(imgTitle).get().getImgNum();
 
         //이미지 키넘버 리턴
         return Long.toString(imgNum);
