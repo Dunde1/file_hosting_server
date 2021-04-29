@@ -17,7 +17,7 @@ public class ImageHosting {
     private Long imgNum;
 
     //유저넘버(외래키 X)
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Long userInfoId;
 
     //이미지 이름(제목)
