@@ -19,6 +19,7 @@
   + "No_title" : 제목없음.
   + "No_requester_name" : 작성자 없음.
   + "No_support_extension" : 확장자가 jpg, jpeg, png 가 아님.
+  + "No_redundant_storage" : 제목, 작성자, 파일이름이 중복됨.
   + "file_conversion_error" : 파일 변환 실패. 개발자에게 문의 바랍니다.
   
 #### 사진꺼내기
