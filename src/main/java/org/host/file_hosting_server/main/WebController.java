@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class WebController {
     @GetMapping("/mit09")
-    public String index() {return "index";}
+    public String mit09() {return "mit09";}
 }
