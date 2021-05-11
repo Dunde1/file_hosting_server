@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title> file_hosting_web </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<h1>사진 넣기</h1><br>
+<form method="post" action="http://localhost:8888/requestSave" enctype="multipart/form-data">
+    <input type="text" name="imgTitle" alt="이미지 아이디 입력">
+    <input type="number" min="0" name="requester" alt="작성자 번호 입력">
+    <input type="file" name="imgFile" alt="업로드 할 파일">
+    <input type="submit" value="이미지 업로드">
+</form><br>
+<h1>관리자 승인</h1><br>
+<form method="post" action="http://localhost:8888/requestAccept">
+    <input type="text" name="key" value="mit09" alt="관리자 키">
+    <input type="number" name="imgNum" min="0" alt="이미지 번호 입력">
+    <input type="submit" value="관리자 승인완료">
+</form>
+</body>
+</html>
